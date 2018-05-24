@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1524760609989.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "22F25AD4",
+    "lastKnownWriteTime" : 1526921354,
+    "last_content_update" : 1526921354886,
+    "path" : "J:/R/pkgstats/country_wise.R",
+    "project_path" : "country_wise.R",
+    "properties" : {
+        "cursorPosition" : "36,0",
+        "scrollLine" : "9",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
