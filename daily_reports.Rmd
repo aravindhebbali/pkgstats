@@ -1,0 +1,160 @@
+---
+title: "Daily Reports"
+author: "Aravind Hebbali"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r lib, message=FALSE, echo=FALSE}
+library(readr)
+library(dplyr)
+library(lubridate)
+library(glue)
+```
+
+```{r url, echo=FALSE, message=FALSE}
+yday      <- today() - 1
+base_url  <- "http://cran-logs.rstudio.com/2019/"
+today_url <- glue(base_url, as.character(yday), ".csv.gz")
+pkg_data  <- read_csv(today_url)
+```
+
+### Overall Downloads
+
+```{r base}
+base_data <- 
+  pkg_data %>%
+  select(package, country) %>%
+  filter(package == "olsrr" | package == "descriptr" |
+           package == "inferr" | package == "rfm" |
+           package == "blorr" | package == "vistributions" |
+           package == "rbin" | package == "xplorerr")
+```
+
+```{r overall}
+base_data %>%
+  group_by(package) %>%
+  tally() %>%
+  arrange(desc(n))
+```
+
+### Daily Total
+
+```{r daily}
+daily_count <-
+  base_data %>%
+  group_by(package) %>%
+  tally() %>%
+  pull(n) %>%
+  sum()
+
+daily_count
+```
+
+### Countries
+
+```{r country}
+base_data %>%
+  group_by(country) %>%
+  tally() %>%
+  arrange(desc(n)) 
+```
+
+```{r func}
+pkg_summary <- function(pkg_data , pkg_name) {
+  
+  pkg_data %>%
+    select(package, country) %>%
+    filter(package == pkg_name) %>%
+    group_by(country) %>%
+    tally() %>%
+    arrange(desc(n))
+  
+}
+```
+
+### olsrr
+
+```{r olsrr}
+pkg_summary(pkg_data, "olsrr")
+```
+
+### rfm
+
+```{r rfm}
+pkg_summary(pkg_data, "rfm")
+```
+
+### descriptr
+
+```{r descriptr}
+pkg_summary(pkg_data, "descriptr")
+```
+
+### blorr
+
+```{r blorr}
+pkg_summary(pkg_data, "blorr")
+```
+
+### inferr
+
+```{r inferr}
+pkg_summary(pkg_data, "inferr")
+```
+
+### vistributions
+
+```{r vistributions}
+pkg_summary(pkg_data, "vistributions")
+```
+
+### rbin
+
+```{r rbin}
+pkg_summary(pkg_data, "rbin")
+```
+
+### xplorerr
+
+```{r xplorerr}
+pkg_summary(pkg_data, "xplorerr")
+```
+
+### Total Downloads
+
+```{r total}
+comp_total <- function(cran_data, n) {
+  cran_data %>%
+    purrr::map_dbl(n) %>%
+    sum()
+}
+
+pkgs <- c("olsrr", "descriptr", "inferr", "rfm", "blorr", "vistributions", "rbin", "xplorerr")
+out   <- purrr::map(pkgs, pkginfo::get_cran_downloads) 
+total <- comp_total(out, 4)
+month_total <- comp_total(out, 3)
+week_total <- comp_total(out, 2)
+pkg_name <- tibble(pkg = pkgs)
+overall <- cbind(pkg_name, purrr::map_df(out, dplyr::bind_rows))
+overall %>%
+  dplyr::arrange(desc(last_month))
+```
+
+### Summary
+
+```{r summary}
+annual  <- pull(tally(overall, total), n)
+monthly <- pull(tally(overall, last_month), n)
+weekly  <- pull(tally(overall, last_week), n)
+tibble(annual, monthly, weekly)
+```
+
+### Latest Count
+
+```{r latest}
+tally(overall, total) + daily_count
+```
