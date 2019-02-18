@@ -1,51 +1,14 @@
-library(readr)
-library(dplyr)
-
-yday      <- lubridate::today() - 1
-base_url  <- "http://cran-logs.rstudio.com/2018/"
-today_url <- paste0(base_url, yday, ".csv.gz")
-pkg_data  <- read_csv(today_url)
-pkg_data
-
-pkg_data %>%
-  select(package) %>%
-  filter(package == "olsrr" | package == "descriptr" |
-           package == "inferr" | package == "rfm" | 
-           package == "blorr") %>%
-  group_by(package) %>%
-  tally() %>%
-  arrange(desc(n))
-
-pkg_data %>%
-  select(package) %>%
-  filter(package == "olsrr" |  package == "descriptr" |
-         package == "inferr" | package == "rfm" | 
-           package == "blorr") %>%
-  group_by(package) %>%
-  tally() %>%
-  pull(n) %>%
-  sum()
-
-
-pkg_data %>%
-  select(package, country) %>%
-  filter(package == "olsrr") %>%
-  group_by(country) %>%
-  tally() %>%
-  arrange(desc(n))
-
-pkg_data %>%
-  select(package, country) %>%
-  filter(package == "blorr") %>%
-  group_by(country) %>%
-  tally() %>%
-  arrange(desc(n))
-
-pkg_data %>%
-  select(package, country) %>%
-  filter(package == "rfm") %>%
-  group_by(country) %>%
-  tally() %>%
-  pull(n) %>%
-  sum()
-
+library(rmarkdown)
+library(fs)
+library(beepr)
+render("J:/R/Others/pkgstats/daily_reports.Rmd")
+file_copy("J:/R/Others/pkgstats/daily_reports.html", 
+                      "C:/Users/HP/Desktop/daily_reports.html")
+beep(3)
+file_delete("J:/R/Others/pkgstats/daily_reports.html")
+file_chmod("C:/Users/HP/Desktop/daily_reports.html", "a+rwx")
+browseURL("C:/Users/HP/Desktop/daily_reports.html")
+Sys.sleep(100)
+file_delete("C:/Users/HP/Desktop/daily_reports.html")
+file_chmod("J:/R/Others/pkgstats/country_wise.log", "a+rwx")
+file_delete("J:/R/Others/pkgstats/country_wise.log")
